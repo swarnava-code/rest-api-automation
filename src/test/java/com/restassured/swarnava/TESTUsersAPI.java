@@ -10,7 +10,7 @@ import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
-public class TESTBooksAPI {
+public class TESTUsersAPI {
     int userId;
 
     @Test(priority = 1)
