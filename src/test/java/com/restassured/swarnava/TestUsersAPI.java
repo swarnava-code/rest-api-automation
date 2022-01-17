@@ -11,7 +11,7 @@ import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
-public class TESTUsersAPI {
+public class TestUsersAPI {
     int userId;
 
     @Test(priority = 1)
