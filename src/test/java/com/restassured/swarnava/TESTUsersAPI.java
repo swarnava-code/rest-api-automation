@@ -3,6 +3,7 @@ package com.restassured.swarnava;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.json.simple.JSONObject;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
@@ -15,14 +16,14 @@ public class TESTUsersAPI {
 
     @Test(priority = 1)
     void testPostUser() {
-        JSONObject request = new JSONObject();
-        request.put("name", "Guddu Ostad");
-        request.put("job", "Tester");
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("name", "Guddu Ostad");
+        bodyJson.put("job", "Tester");
         Response response = given()
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(request.toJSONString())
+                .body(bodyJson.toJSONString())
                 .when()
                 .post("https://reqres.in/api/users/")
                 .then()
@@ -33,55 +34,90 @@ public class TESTUsersAPI {
     }
 
     @Test(priority = 2)
-    void testPutUser() {
-        JSONObject request = new JSONObject();
-        request.put("name", "Dhritimoy Majumder");
-        request.put("job", "Frontend Developer");
-        given()
+    void testPostUserRegister() {
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("email", "eve.holt@reqres.in");
+        bodyJson.put("password", "Pistol");
+        Response response = given()
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(request.toJSONString())
+                .body(bodyJson.toJSONString())
                 .when()
-                .put("https://reqres.in/api/users/"+userId)
+                .post("https://reqres.in/api/register")
                 .then()
                 .statusCode(200)
-                .log().all();
+                .log().all()
+                .extract().response();
     }
 
     @Test(priority = 3)
-    void testPatchUser() {
-        //int id = 130;
-        JSONObject request = new JSONObject();
-        request.put("name", "Dhritimoy Majumder");
-        request.put("job", "Backend Developer");
+    void testPostUserLogin() {
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("email", "eve.holt@reqres.in");
+        bodyJson.put("password", "Pistol");
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bodyJson.toJSONString())
+                .when()
+                .post("https://reqres.in/api/login")
+                .then()
+                .statusCode(200)
+                .log().all()
+                .extract().response();
+    }
+
+    @Test(priority = 4)
+    void testPutUser() {
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("name", "Dhritimoy Majumder");
+        bodyJson.put("job", "Frontend Developer");
         given()
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(request.toJSONString())
+                .body(bodyJson.toJSONString())
                 .when()
-                .patch("https://reqres.in/api/users/"+userId)
+                .put("https://reqres.in/api/users/" + userId)
                 .then()
                 .statusCode(200)
                 .log().all();
     }
 
-    @Test(priority = 4)
+    @Test(priority = 5)
+    void testPatchUser() {
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("name", "Dhritimoy Majumder");
+        bodyJson.put("job", "Backend Developer");
+        given()
+                .header("Content-Type", "application/json")
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bodyJson.toJSONString())
+                .when()
+                .patch("https://reqres.in/api/users/" + userId)
+                .then()
+                .statusCode(200)
+                .log().all();
+    }
+
+    @Test(priority = 6)
     void testDeleteUser() {
         //int id = 130;
-        JSONObject request = new JSONObject();
-        request.put("name", "Dhritimoy Majumder");
-        request.put("job", "Developer");
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("name", "Dhritimoy Majumder");
+        bodyJson.put("job", "Developer");
 
         when()
-                .delete("https://reqres.in/api/users/"+userId)
+                .delete("https://reqres.in/api/users/" + userId)
                 .then()
                 .statusCode(204)
                 .log().all();
     }
 
-    @Test(priority = 5)
+    @Test(priority = 7)
     void testGetUsers() {
         given()
                 .param("page", "2")
@@ -92,15 +128,36 @@ public class TESTUsersAPI {
                 .log().all();
     }
 
-    @Test(priority = 6)
+    @Test(priority = 8)
     void testGetSingleUser() {
         int id = 2;
         given()
                 .param("page", "2")
                 .when()
-                .get("https://reqres.in/api/users/"+id).then()
+                .get("https://reqres.in/api/users/" + id).then()
                 .statusCode(200)
                 .body("data.id", equalTo(id))
                 .log().all();
+    }
+
+    @Test(priority = 9)
+    void testGetDelayResponse() {
+        int actualSec = 3;
+        int expectedMsMinimum = actualSec * 1000;
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("name", "Guddu Ostad");
+        bodyJson.put("job", "Tester");
+        Response response = given()
+                .header("Content-Type", "application/json")
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bodyJson.toJSONString())
+                .when()
+                .get("https://reqres.in/api/users?delay=" + actualSec)
+                .then()
+                .statusCode(200)
+                .log().all()
+                .extract().response();
+        Assert.assertTrue((response.getTime() > expectedMsMinimum));
     }
 }
