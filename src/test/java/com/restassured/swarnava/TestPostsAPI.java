@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import org.json.simple.JSONObject;
 import org.testng.annotations.Test;
 
+import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -19,20 +20,20 @@ public class TestPostsAPI {
 
     @Test(priority = 1)
     void testCreateUser() {
-        String randomMail = "swarnava"+Math.random()+"@gmail.com";
+        String randomMail = "swarnava" + Math.random() + "@gmail.com";
         JSONObject bodyJson = new JSONObject();
         bodyJson.put("name", "Swarnava Chak");
         bodyJson.put("email", randomMail);
         bodyJson.put("gender", "male");
         bodyJson.put("status", "active");
         Response response = given()
-                .header("Authorization", "Bearer "+accessToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .post(baseUrl+"/public/v1/users")
-                .then()
+            .when()
+                .post(baseUrl + "/public/v1/users")
+            .then()
                 .statusCode(201)
                 .log().all()
                 .extract().response();
@@ -44,18 +45,18 @@ public class TestPostsAPI {
     @Test(priority = 2)
     void testCreateUserPost() {
         JSONObject bodyJson = new JSONObject();
-        bodyJson.put("user", userName);
+        bodyJson.put("user", "Dhriti Majumder");
         bodyJson.put("title", "Tester");
         bodyJson.put("body", "Hello World");
         Response response = given()
                 .pathParam("userId", userId)
-                .header("Authorization", "Bearer "+accessToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .post(baseUrl+"/public/v1/users/{userId}/posts")
-                .then()
+            .when()
+                .post(baseUrl + "/public/v1/users/{userId}/posts")
+            .then()
                 .statusCode(201)
                 .log().all()
                 .extract().response();
@@ -70,13 +71,13 @@ public class TestPostsAPI {
         bodyJson.put("body", "I was wondering if after all these years you'd like to meet");
         given()
                 .pathParam("postId", postId)
-                .header("Authorization", "Bearer "+accessToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .post(baseUrl+"/public/v1/posts/{postId}/comments")
-                .then()
+            .when()
+                .post(baseUrl + "/public/v1/posts/{postId}/comments")
+            .then()
                 .statusCode(201)
                 .log().all();
     }
@@ -89,115 +90,122 @@ public class TestPostsAPI {
         bodyJson.put("status", "completed");
         given()
                 .pathParam("userId", userId)
-                .header("Authorization", "Bearer "+accessToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .post(baseUrl+"/public/v1/users/{userId}/todos")
-                .then()
+            .when()
+                .post(baseUrl + "/public/v1/users/{userId}/todos")
+            .then()
                 .statusCode(201)
                 .log().all();
     }
 
     @Test(priority = 5)
-    void testGetUsers(){
+    void testGetUsers() {
         given()
-                .when()
-                .get(baseUrl+"/public/v1/users").then()
+            .when()
+                .get(baseUrl + "/public/v1/users")
+            .then()
                 .statusCode(200)
                 .body("data.size()", greaterThan(1))
                 .log().all();
     }
 
     @Test(priority = 6)
-    void testGetPosts(){
+    void testGetPosts() {
         given()
-                .when()
-                .get(baseUrl+"/public/v1/posts").then()
+            .when()
+                .get(baseUrl + "/public/v1/posts")
+            .then()
                 .statusCode(200)
                 .body("data.size()", greaterThan(1))
                 .log().all();
     }
 
     @Test(priority = 7)
-    void testGetComments(){
+    void testGetComments() {
         given()
-                .when()
-                .get(baseUrl+"/public/v1/comments").then()
+            .when()
+                .get(baseUrl + "/public/v1/comments")
+            .then()
                 .statusCode(200)
                 .body("data.size()", greaterThan(1))
                 .log().all();
     }
 
     @Test(priority = 8)
-    void testGetTodos(){
+    void testGetTodos() {
         given()
-                .when()
-                .get(baseUrl+"/public/v1/todos").then()
+            .when()
+                .get(baseUrl + "/public/v1/todos")
+            .then()
                 .statusCode(200)
                 .body("data.size()", greaterThan(1))
                 .log().all();
     }
 
     @Test(priority = 9)
-    void testGetSingleUser(){
+    void testGetSingleUser() {
         given()
                 .pathParam("userId", userId)
-                .when()
-                .get(baseUrl+"/public/v1/users/{userId}").then()
+            .when()
+                .get(baseUrl + "/public/v1/users/{userId}")
+            .then()
                 .statusCode(200)
                 .body("meta", equalTo(null))
                 .log().all();
     }
 
     @Test(priority = 10)
-    void testGetPostsByUserId(){
+    void testGetPostsByUserId() {
         given()
                 .pathParam("userId", userId)
-                .when()
-                .get(baseUrl+"/public/v1/users/{userId}/posts").then()
+            .when()
+                .get(baseUrl + "/public/v1/users/{userId}/posts")
+            .then()
                 .statusCode(200)
                 .log().all();
     }
 
     @Test(priority = 11)
-    void testGetCommentsByPostId(){
+    void testGetCommentsByPostId() {
         given()
                 .pathParam("postId", postId)
-                .when()
-                .get(baseUrl+"/public/v1/posts/{postId}/comments").then()
+            .when()
+                .get(baseUrl + "/public/v1/posts/{postId}/comments")
+            .then()
                 .statusCode(200)
                 .log().all();
     }
 
     @Test(priority = 12)
-    void testGetTodosByUserId(){
+    void testGetTodosByUserId() {
         given()
                 .pathParam("userId", userId)
-                .when()
-                .get(baseUrl+"/public/v1/users/{userId}/todos").then()
+            .when()
+                .get(baseUrl + "/public/v1/users/{userId}/todos")
+            .then()
                 .statusCode(200)
                 .log().all();
     }
 
 
-
     @Test(priority = 13)
     void testPutUser() {
-        String randomMail = "swarnava"+Math.random()+"@gmail.com";
+        String randomMail = "swarnava" + Math.random() + "@gmail.com";
         JSONObject bodyJson = new JSONObject();
         bodyJson.put("name", "Swarnava Chak");
         bodyJson.put("email", randomMail);
         given()
                 .pathParam("userId", userId)
-                .header("Authorization", "Bearer "+accessToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .put(baseUrl+"/public/v1/users/{userId}")
-                .then()
+            .when()
+                .put(baseUrl + "/public/v1/users/{userId}")
+            .then()
                 .statusCode(200)
                 .log().all();
     }
@@ -206,12 +214,12 @@ public class TestPostsAPI {
     void testDeleteUser() {
         given()
                 .pathParam("userId", userId)
-                .header("Authorization", "Bearer "+accessToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .when()
-                .put(baseUrl+"/public/v1/users/{userId}")
-                .then()
+            .when()
+                .put(baseUrl + "/public/v1/users/{userId}")
+            .then()
                 .statusCode(200)
                 .log().all();
     }

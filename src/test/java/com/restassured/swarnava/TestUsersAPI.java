@@ -2,14 +2,14 @@ package com.restassured.swarnava;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSender;
+import io.restassured.specification.RequestSpecification;
 import org.json.simple.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
 
 public class TestUsersAPI {
     int userId;
@@ -24,9 +24,9 @@ public class TestUsersAPI {
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
+            .when()
                 .post("https://reqres.in/api/users/")
-                .then()
+            .then()
                 .statusCode(201)
                 .log().all()
                 .extract().response();
@@ -38,14 +38,14 @@ public class TestUsersAPI {
         JSONObject bodyJson = new JSONObject();
         bodyJson.put("email", "eve.holt@reqres.in");
         bodyJson.put("password", "Pistol");
-        Response response = given()
+        given()
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
+            .when()
                 .post("https://reqres.in/api/register")
-                .then()
+            .then()
                 .statusCode(200)
                 .log().all()
                 .extract().response();
@@ -61,9 +61,9 @@ public class TestUsersAPI {
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
+            .when()
                 .post("https://reqres.in/api/login")
-                .then()
+            .then()
                 .statusCode(200)
                 .log().all()
                 .extract().response();
@@ -75,13 +75,14 @@ public class TestUsersAPI {
         bodyJson.put("name", "Dhritimoy Majumder");
         bodyJson.put("job", "Frontend Developer");
         given()
+                .pathParam("userId", userId)
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .put("https://reqres.in/api/users/" + userId)
-                .then()
+            .when()
+                .put("https://reqres.in/api/users/{userId}")
+            .then()
                 .statusCode(200)
                 .log().all();
     }
@@ -92,27 +93,25 @@ public class TestUsersAPI {
         bodyJson.put("name", "Dhritimoy Majumder");
         bodyJson.put("job", "Backend Developer");
         given()
+                .pathParam("userId", userId)
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .patch("https://reqres.in/api/users/" + userId)
-                .then()
+            .when()
+                .patch("https://reqres.in/api/users/{userId}")
+            .then()
                 .statusCode(200)
                 .log().all();
     }
 
     @Test(priority = 6)
     void testDeleteUser() {
-        //int id = 130;
-        JSONObject bodyJson = new JSONObject();
-        bodyJson.put("name", "Dhritimoy Majumder");
-        bodyJson.put("job", "Developer");
-
-        when()
-                .delete("https://reqres.in/api/users/" + userId)
-                .then()
+        given()
+                .pathParam("userId", userId)
+            .when()
+                .delete("https://reqres.in/api/users/{userId}")
+            .then()
                 .statusCode(204)
                 .log().all();
     }
@@ -121,8 +120,9 @@ public class TestUsersAPI {
     void testGetUsers() {
         given()
                 .param("page", "2")
-                .when()
-                .get("https://reqres.in/api/users").then()
+            .when()
+                .get("https://reqres.in/api/users")
+            .then()
                 .statusCode(200)
                 .body("size()", greaterThan(1))
                 .log().all();
@@ -133,8 +133,9 @@ public class TestUsersAPI {
         int id = 2;
         given()
                 .param("page", "2")
-                .when()
-                .get("https://reqres.in/api/users/" + id).then()
+            .when()
+                .get("https://reqres.in/api/users/" + id)
+            .then()
                 .statusCode(200)
                 .body("data.id", equalTo(id))
                 .log().all();
@@ -142,22 +143,23 @@ public class TestUsersAPI {
 
     @Test(priority = 9)
     void testGetDelayResponse() {
-        int actualSec = 3;
-        int expectedMsMinimum = actualSec * 1000;
+        long actualSec = 3;
+        Long expectedMsMinimum = actualSec * 1000;
         JSONObject bodyJson = new JSONObject();
         bodyJson.put("name", "Guddu Ostad");
         bodyJson.put("job", "Tester");
         Response response = given()
+                .param("delay", actualSec)
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
-                .get("https://reqres.in/api/users?delay=" + actualSec)
-                .then()
+            .when()
+                .get("https://reqres.in/api/users")
+            .then()
+                .time(greaterThan(expectedMsMinimum))
                 .statusCode(200)
                 .log().all()
                 .extract().response();
-        Assert.assertTrue((response.getTime() > expectedMsMinimum));
     }
 }

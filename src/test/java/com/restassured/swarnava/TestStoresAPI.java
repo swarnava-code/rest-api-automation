@@ -37,9 +37,9 @@ public class TestStoresAPI {
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
+            .when()
                 .post(baseUrl+"/users")
-                .then()
+            .then()
                 .statusCode(200)
                 .log().all();
     }
@@ -57,9 +57,9 @@ public class TestStoresAPI {
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
+            .when()
                 .post(baseUrl+"/products")
-                .then()
+            .then()
                 .statusCode(200)
                 .log().all();
     }
@@ -67,8 +67,9 @@ public class TestStoresAPI {
     @Test(priority = 3)
     void testGetProducts(){
         given()
-                .when()
-                .get(baseUrl+"/products").then()
+            .when()
+                .get(baseUrl+"/products")
+            .then()
                 .statusCode(200)
                 .body("size()", greaterThan(1))
                 .log().all();
@@ -78,8 +79,9 @@ public class TestStoresAPI {
     void testGetSingleProduct(){
         given()
                 .pathParam("productId", 1)
-                .when()
-                .get(baseUrl+"/products/{productId}").then()
+            .when()
+                .get(baseUrl+"/products/{productId}")
+            .then()
                 .statusCode(200)
                 .body("size()", greaterThan(1))
                 .log().all();
@@ -88,8 +90,9 @@ public class TestStoresAPI {
     @Test(priority = 5)
     void testGetCategory(){
         given()
-                .when()
-                .get(baseUrl+"/products/categories").then()
+            .when()
+                .get(baseUrl+"/products/categories")
+            .then()
                 .statusCode(200)
                 .body("size()", greaterThan(1))
                 .body("$", hasItems("electronics", "jewelery", "men's clothing", "women's clothing"))
@@ -100,9 +103,10 @@ public class TestStoresAPI {
     void testGetByCategory(){
         String category = "jewelery";
         given()
-                .when()
+            .when()
                 .pathParam("category", category)
-                .get(baseUrl+"/products/category/{category}").then()
+                .get(baseUrl+"/products/category/{category}")
+            .then()
                 .statusCode(200)
                 .body("size()", greaterThan(1))
                 .log().all();
@@ -112,9 +116,10 @@ public class TestStoresAPI {
     void testGetProductByLimit(){
         int limit = 3;
         given()
-                .when()
+            .when()
                 .param("limit", limit)
-                .get(baseUrl+"/products").then()
+                .get(baseUrl+"/products")
+            .then()
                 .statusCode(200)
                 .body("size()", equalTo(limit))
                 .log().all();
@@ -134,9 +139,9 @@ public class TestStoresAPI {
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
+            .when()
                 .put(baseUrl+"/products/{productId}")
-                .then()
+            .then()
                 .statusCode(200)
                 .log().all();
     }
@@ -155,9 +160,9 @@ public class TestStoresAPI {
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(bodyJson.toJSONString())
-                .when()
+            .when()
                 .patch(baseUrl+"/products/{productId}")
-                .then()
+            .then()
                 .statusCode(200)
                 .log().all();
     }
@@ -169,9 +174,9 @@ public class TestStoresAPI {
                 .header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .when()
+            .when()
                 .delete(baseUrl+"/products/{productId}")
-                .then()
+            .then()
                 .statusCode(200)
                 .log().all();
     }

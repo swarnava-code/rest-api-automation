@@ -16,3 +16,8 @@ Test results are available at `test-results/` directory
 - Tested Books API result `Test Results - TestBooksAPI.html`
 - Tested Stores API result `Test Results - TestStoresAPI.html`
 - Tested Posts API result `Test Results - TestPostsAPI.html`
+
+
+# Online Tools #
+
+- `https://codebeautify.org/htmlviewer`
