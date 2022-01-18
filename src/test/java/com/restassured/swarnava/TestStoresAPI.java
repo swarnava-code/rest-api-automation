@@ -6,8 +6,7 @@ import org.json.simple.JSONObject;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 
 public class TestStoresAPI {
     String baseUrl =  "https://fakestoreapi.com";
@@ -93,12 +92,13 @@ public class TestStoresAPI {
                 .get(baseUrl+"/products/categories").then()
                 .statusCode(200)
                 .body("size()", greaterThan(1))
+                .body("$", hasItems("electronics", "jewelery", "men's clothing", "women's clothing"))
                 .log().all();
     }
 
     @Test(priority = 6)
     void testGetByCategory(){
-        String category = "jewelery"; //  "electronics", "jewelery", "men's clothing", "women's clothing"
+        String category = "jewelery";
         given()
                 .when()
                 .pathParam("category", category)
